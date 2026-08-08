@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NetPulse AI — Enterprise Autonomous Network Observability Platform</title>
+    <meta name="description" content="Enterprise Network Observability, Digital Twin Dynamic Topology Visualizer, gNMI Telemetry, DPI Packet Analyzer, and Autonomous AI NetOps Copilot.">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Top Navigation Bar -->
+        <header class="top-nav">
+            <div class="brand">
+                <div class="logo-icon">
+                    <i class="fa-solid fa-network-wired"></i>
+                </div>
+                <div class="brand-text">
+                    <h1>NetPulse <span class="badge-ai">AI</span></h1>
+                    <span class="sub-title">Autonomous NetOps & Telemetry Platform v2.4</span>
+                </div>
+            </div>
+
+            <div class="global-metrics">
+                <div class="metric-chip green" id="chip-health">
+                    <i class="fa-solid fa-heart-pulse"></i>
+                    <span>Network Health: <strong id="health-score">98.4%</strong></span>
+                </div>
+                <div class="metric-chip blue">
+                    <i class="fa-solid fa-diagram-project"></i>
+                    <span>Monitored Nodes: <strong>8 Core Devices</strong></span>
+                </div>
+                <div class="metric-chip purple">
+                    <i class="fa-solid fa-bolt"></i>
+                    <span>gNMI Streaming: <strong id="telemetry-rate">100ms interval</strong></span>
+                </div>
+                <div class="metric-chip red pulse" id="incident-chip" style="display: none;">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    <span>Active Incident: <strong id="active-alert-title">BGP Loop</strong></span>
+                </div>
+            </div>
+
+            <div class="nav-actions">
+                <button class="btn btn-outline" id="btn-simulate-issue">
+                    <i class="fa-solid fa-bug"></i> Failure Scenario
+                </button>
+                <button class="btn btn-primary" id="btn-ai-rca">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> AI Diagnosis
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Workspace Layout -->
+        <div class="workspace">
+            <!-- Sidebar Controls -->
+            <aside class="sidebar">
+                <div class="sidebar-section">
+                    <h3><i class="fa-solid fa-sliders"></i> Navigation Views</h3>
+                    <ul class="nav-menu">
+                        <li class="active" data-view="topology">
+                            <i class="fa-solid fa-diagram-project"></i> Digital Twin Topology
+                        </li>
+                        <li data-view="ai-copilot">
+                            <i class="fa-solid fa-robot"></i> AI NetOps Copilot
+                            <span class="badge-count" id="ai-alert-count">1</span>
+                        </li>
+                        <li data-view="packet-inspector">
+                            <i class="fa-solid fa-microchip"></i> DPI Packet Inspector
+                        </li>
+                        <li data-view="config-generator">
+                            <i class="fa-solid fa-code"></i> Vendor Config & Rollback
+                        </li>
+                        <li data-view="sla-analytics">
+                            <i class="fa-solid fa-chart-line"></i> SLA & Cloud Path Probes
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-section">
+                    <h3><i class="fa-solid fa-vial"></i> Failure Simulator Engine</h3>
+                    <div class="scenario-selector">
+                        <label for="scenario-select">Select Enterprise Incident:</label>
+                        <select id="scenario-select">
+                            <option value="bgp_loop">1. BGP AS-Path Prepend Loop (R1-HQ-CORE)</option>
+                            <option value="mtu_mismatch">2. OSPF MTU Mismatch (SW-DIST-01)</option>
+                            <option value="crc_storm">3. Optical SFP+ Degradation & CRC Storm (R2-DC-CORE)</option>
+                            <option value="stp_root_flip">4. RSTP Root Bridge Re-election (SW-ACCESS-01)</option>
+                            <option value="vxlan_evpn">5. VXLAN EVPN VNI Mapping Error (FW-PA-5250)</option>
+                        </select>
+                        <button class="btn btn-danger btn-full" id="btn-inject-scenario">
+                            <i class="fa-solid fa-play"></i> Trigger Scenario
+                        </button>
+                        <button class="btn btn-secondary btn-full" id="btn-reset-scenario">
+                            <i class="fa-solid fa-rotate-left"></i> Auto-Remediate & Converge
+                        </button>
+                    </div>
+                </div>
+
+                <div class="sidebar-section live-feed">
+                    <h3><i class="fa-solid fa-terminal"></i> Live gNMI / Syslog Console</h3>
+                    <div class="log-console" id="live-log-console">
+                        <div class="log-line info">[gNMI] Connected to R1-HQ-CORE (10.0.0.1:57400)</div>
+                        <div class="log-line info">[BGP] Established session 10.255.0.2 (AS 65001)</div>
+                        <div class="log-line info">[gNMI] Subscribed to /components/interface[TenGigE0/0/1]/state</div>
+                        <div class="log-line success">[SLA] AWS DirectConnect RTT: 11.8ms Jitter: 0.4ms</div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Main Content Area -->
+            <main class="main-content">
+                <!-- VIEW 1: Digital Twin Topology Canvas -->
+                <section class="view-panel active" id="view-topology">
+                    <div class="panel-header">
+                        <div>
+                            <h2><i class="fa-solid fa-diagram-project"></i> Real-Time Topology & Telemetry Twin</h2>
+                            <p class="panel-subtitle">Interactive Physics Network Canvas • Drag nodes to reposition • Click to inspect gNMI telemetry</p>
+                        </div>
+                        <div class="panel-actions">
+                            <button class="btn-sm" id="btn-reset-layout"><i class="fa-solid fa-arrows-to-eye"></i> Reset Layout</button>
+                            <span class="legend-item"><span class="dot green"></span> Healthy (gNMI OK)</span>
+                            <span class="legend-item"><span class="dot amber"></span> High Traffic</span>
+                            <span class="legend-item"><span class="dot red"></span> Critical Drop</span>
+                        </div>
+                    </div>
+                    
+                    <div class="topology-container">
+                        <canvas id="topology-canvas"></canvas>
+
+                        <!-- Node Hover / Click Inspector -->
+                        <div class="node-inspector" id="node-inspector" style="display: none;">
+                            <div class="inspector-header">
+                                <h4 id="inspect-node-name">R1-HQ-CORE</h4>
+                                <button class="btn-close" id="btn-close-inspector">&times;</button>
+                            </div>
+                            <div class="inspector-body">
+                                <div class="stat-row"><span>Device Type:</span> <strong id="inspect-type">Core Router</strong></div>
+                                <div class="stat-row"><span>Vendor / OS:</span> <strong id="inspect-vendor">Cisco IOS-XE 17.9.3</strong></div>
+                                <div class="stat-row"><span>Management IP:</span> <strong id="inspect-ip">10.0.0.1</strong></div>
+                                <div class="stat-row"><span>CPU / Memory:</span> <strong id="inspect-cpu">18% / 42%</strong></div>
+                                <div class="stat-row"><span>gNMI Status:</span> <strong id="inspect-gnmi" style="color:var(--success);">CONNECTED (100ms)</strong></div>
+                                <hr>
+                                <h5>Interface Counters & Telemetry</h5>
+                                <div class="interface-list" id="inspect-interfaces">
+                                    <!-- Dynamic Interface Rows -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW 2: AI NetOps Copilot Chat & RCA -->
+                <section class="view-panel" id="view-ai-copilot">
+                    <div class="panel-header">
+                        <div>
+                            <h2><i class="fa-solid fa-robot"></i> NetPulse AI — Autonomous Network Diagnostic Agent</h2>
+                            <p class="panel-subtitle">Real-time Root Cause Analysis (RCA) Engine with LLM NetOps Copilot</p>
+                        </div>
+                        <span class="ai-status"><i class="fa-solid fa-brain"></i> Gemini NetOps AI Agent Active</span>
+                    </div>
+
+                    <div class="ai-copilot-container">
+                        <!-- AI Incident RCA Card -->
+                        <div class="rca-card" id="rca-card">
+                            <div class="rca-header">
+                                <div class="rca-title">
+                                    <i class="fa-solid fa-triangle-exclamation color-red" id="rca-icon"></i>
+                                    <div>
+                                        <h3 id="rca-incident-name">Incident #INC-8942: BGP Route Flapping & AS-Path Loop Detected</h3>
+                                        <span class="timestamp" id="rca-timestamp">Detected via real-time gNMI telemetry stream</span>
+                                    </div>
+                                </div>
+                                <div class="severity-tag critical" id="rca-severity">CRITICAL</div>
+                            </div>
+
+                            <div class="rca-grid">
+                                <div class="rca-box">
+                                    <h4><i class="fa-solid fa-magnifying-glass"></i> Root Cause Analysis</h4>
+                                    <p id="rca-root-cause">Autonomous System AS-65001 received an advertised BGP prefix 172.16.0.0/16 containing its own AS in the path from peer 10.255.0.2 (R1-HQ-CORE), triggering BGP loop prevention drop and session teardown.</p>
+                                </div>
+
+                                <div class="rca-box">
+                                    <h4><i class="fa-solid fa-burst"></i> Blast Radius & Business Impact</h4>
+                                    <p id="rca-blast-radius">12 Cloud Microservices offline. Multi-cloud traffic redirected via backup 1G WAN tunnel causing 45ms added latency.</p>
+                                </div>
+
+                                <div class="rca-box full-width">
+                                    <h4><i class="fa-solid fa-shield-halved"></i> Automated Remediation Plan</h4>
+                                    <ol id="rca-steps">
+                                        <li>Apply AS-path filter on <code>R1-HQ-CORE</code> interface <code>TenGigE0/0/1</code> to strip duplicate AS sequence.</li>
+                                        <li>Execute soft BGP reset: <code>clear ip bgp 10.255.0.2 soft in</code>.</li>
+                                        <li>Verify route table convergence via PyATS automated test runner.</li>
+                                    </ol>
+                                    <div class="rca-actions">
+                                        <button class="btn btn-success" id="btn-apply-remediation">
+                                            <i class="fa-solid fa-code"></i> View Multi-Vendor Fix & Rollback
+                                        </button>
+                                        <button class="btn btn-primary" id="btn-execute-auto-fix">
+                                            <i class="fa-solid fa-wand-magic-sparkles"></i> Auto-Remediate Network
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Interactive AI Chat Stream -->
+                        <div class="chat-wrapper">
+                            <div class="chat-messages" id="chat-messages">
+                                <div class="message ai">
+                                    <div class="avatar"><i class="fa-solid fa-robot"></i></div>
+                                    <div class="content">
+                                        <p>Hello! I am <strong>NetPulse AI</strong>, your autonomous network copilot. I continuously monitor gNMI telemetry streams, Syslog messages, and packet dumps across your multi-vendor infrastructure. Ask me any troubleshooting or configuration question!</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="chat-input-bar">
+                                <input type="text" id="chat-input" placeholder="Ask AI e.g., 'How do I fix MTU mismatch in OSPF?' or 'Show BGP summary for R1-HQ-CORE'...">
+                                <button class="btn btn-primary" id="btn-send-chat"><i class="fa-solid fa-paper-plane"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW 3: DPI Packet Inspector (Wireshark-style) -->
+                <section class="view-panel" id="view-packet-inspector">
+                    <div class="panel-header">
+                        <div>
+                            <h2><i class="fa-solid fa-microchip"></i> Deep Packet Inspection (DPI) & PCAP Analyzer</h2>
+                            <p class="panel-subtitle">Wireshark-style Packet Frame Decoder & Hex Payload Stream Viewer</p>
+                        </div>
+                        <div class="panel-actions">
+                            <span class="badge-tag"><i class="fa-solid fa-file-code"></i> Capture: Live gNMI & BGP Feed</span>
+                        </div>
+                    </div>
+
+                    <div class="dpi-container">
+                        <!-- Packet Table -->
+                        <div class="packet-list-wrapper">
+                            <table class="packet-table">
+                                <thead>
+                                    <tr>
+                                        <th>No.</th>
+                                        <th>Time (s)</th>
+                                        <th>Source</th>
+                                        <th>Destination</th>
+                                        <th>Protocol</th>
+                                        <th>Length</th>
+                                        <th>Info / Summary</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="packet-table-body">
+                                    <!-- Dynamic Packet Rows -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Split View: Protocol Tree & Hex Dump -->
+                        <div class="packet-inspector-split">
+                            <div class="packet-detail-wrapper">
+                                <h3><i class="fa-solid fa-list-nodes"></i> Frame Protocol Tree (Selected Frame #<span id="selected-frame-no">3</span>)</h3>
+                                <div class="protocol-tree" id="protocol-tree">
+                                    <!-- Dynamic Protocol Tree -->
+                                </div>
+                            </div>
+
+                            <div class="hex-dump-wrapper">
+                                <h3><i class="fa-solid fa-terminal"></i> Hexadecimal & ASCII Payload Dump</h3>
+                                <pre class="hex-dump-code" id="hex-dump-code">0000  00 1c 73 00 00 99 00 1b 54 00 12 34 08 00 45 00  ..s.....T..4..E.
+0010  00 4c 3a f1 40 00 40 06 91 d2 0a 00 00 01 0a ff  .L:.@.@.........
+0020  00 02 e0 38 00 00 00 00 00 01 00 00 00 01 02 00  ...8............</pre>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW 4: Vendor Config & Rollback Generator -->
+                <section class="view-panel" id="view-config-generator">
+                    <div class="panel-header">
+                        <div>
+                            <h2><i class="fa-solid fa-code"></i> Multi-Vendor Configuration & Rollback Generator</h2>
+                            <p class="panel-subtitle">Automated pre-audited configuration templates with zero-downtime rollback scripts</p>
+                        </div>
+                        <div class="vendor-selector">
+                            <button class="vendor-btn active" data-vendor="cisco_ios">Cisco IOS-XE</button>
+                            <button class="vendor-btn" data-vendor="arista_eos">Arista EOS</button>
+                            <button class="vendor-btn" data-vendor="juniper_junos">Juniper Junos</button>
+                            <button class="vendor-btn" data-vendor="palo_alto">Palo Alto PAN-OS</button>
+                        </div>
+                    </div>
+
+                    <div class="config-container">
+                        <div class="config-box">
+                            <div class="config-box-header">
+                                <span><i class="fa-solid fa-file-lines"></i> Remediation Configuration Code</span>
+                                <button class="btn-copy" id="btn-copy-config"><i class="fa-solid fa-copy"></i> Copy Code</button>
+                            </div>
+                            <pre><code id="code-remediation">// Select vendor above to view generated remediation config</code></pre>
+                        </div>
+
+                        <div class="config-box">
+                            <div class="config-box-header warning">
+                                <span><i class="fa-solid fa-rotate-left"></i> Automated Rollback Script (Safety Execution)</span>
+                                <button class="btn-copy" id="btn-copy-rollback"><i class="fa-solid fa-copy"></i> Copy Code</button>
+                            </div>
+                            <pre><code id="code-rollback">// Select vendor above to view rollback script</code></pre>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW 5: SLA Analytics & Cloud Probes -->
+                <section class="view-panel" id="view-sla-analytics">
+                    <div class="panel-header">
+                        <div>
+                            <h2><i class="fa-solid fa-chart-line"></i> Synthetic SLA, Jitter & Cloud Path Probes</h2>
+                            <p class="panel-subtitle">Real-time path performance monitoring across AWS, Azure, and Multi-Site SD-WAN overlays</p>
+                        </div>
+                    </div>
+
+                    <div class="sla-grid">
+                        <div class="sla-card">
+                            <h3>AWS DirectConnect (US-East-1)</h3>
+                            <div class="metric-large green">11.8 ms <span class="unit">RTT</span></div>
+                            <div class="sla-sub">Jitter: 0.4ms | Packet Loss: 0.00%</div>
+                            <div class="sparkline-bar">
+                                <div class="bar" style="height: 40%"></div>
+                                <div class="bar" style="height: 50%"></div>
+                                <div class="bar" style="height: 45%"></div>
+                                <div class="bar" style="height: 60%"></div>
+                                <div class="bar" style="height: 38%"></div>
+                                <div class="bar" style="height: 42%"></div>
+                            </div>
+                        </div>
+
+                        <div class="sla-card">
+                            <h3>Azure ExpressRoute (US-West-2)</h3>
+                            <div class="metric-large green">24.2 ms <span class="unit">RTT</span></div>
+                            <div class="sla-sub">Jitter: 1.1ms | Packet Loss: 0.00%</div>
+                            <div class="sparkline-bar">
+                                <div class="bar" style="height: 60%"></div>
+                                <div class="bar" style="height: 65%"></div>
+                                <div class="bar" style="height: 70%"></div>
+                                <div class="bar" style="height: 58%"></div>
+                                <div class="bar" style="height: 62%"></div>
+                                <div class="bar" style="height: 64%"></div>
+                            </div>
+                        </div>
+
+                        <div class="sla-card">
+                            <h3>Branch SD-WAN Overlay (London-HQ)</h3>
+                            <div class="metric-large amber" id="sla-sdwan-latency">84.5 ms <span class="unit">RTT</span></div>
+                            <div class="sla-sub" id="sla-sdwan-sub">Jitter: 14.2ms | Packet Loss: 2.4% (Degraded)</div>
+                            <div class="sparkline-bar" id="sdwan-sparkline">
+                                <div class="bar red" style="height: 80%"></div>
+                                <div class="bar red" style="height: 95%"></div>
+                                <div class="bar red" style="height: 90%"></div>
+                                <div class="bar red" style="height: 100%"></div>
+                                <div class="bar red" style="height: 85%"></div>
+                                <div class="bar red" style="height: 88%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <!-- Application Script -->
+    <script src="app.js"></script>
+</body>
+</html>

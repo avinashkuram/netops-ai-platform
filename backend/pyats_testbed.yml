@@ -1,0 +1,43 @@
+# PyATS / Genie Network Testbed Specification
+# Used for automated network state validation and pre/post change verification.
+
+testbed:
+  name: Enterprise-Core-Network-Testbed
+  credentials:
+    default:
+      username: netopsadmin
+      password: "ENCRYPTED_NETOPS_SECRET"
+
+devices:
+  R1-HQ-CORE:
+    alias: r1_core
+    os: iosxe
+    platform: cat8k
+    type: router
+    connections:
+      cli:
+        protocol: ssh
+        ip: 10.0.0.1
+        port: 22
+
+  R2-DC-CORE:
+    alias: r2_core
+    os: eos
+    platform: arista
+    type: router
+    connections:
+      cli:
+        protocol: ssh
+        ip: 10.0.0.2
+        port: 22
+
+  SW-DIST-01:
+    alias: dist_sw01
+    os: nxos
+    platform: n9k
+    type: switch
+    connections:
+      cli:
+        protocol: ssh
+        ip: 10.0.2.1
+        port: 22
